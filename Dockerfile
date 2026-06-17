@@ -13,7 +13,8 @@ RUN composer install \
     --optimize-autoloader \
     --no-scripts \
     --no-interaction \
-    --prefer-dist
+    --prefer-dist \
+    --ignore-platform-req=ext-oci8
 
 COPY . .
 
@@ -41,7 +42,7 @@ RUN npm run build
 # ============================================================
 FROM php:8.3-fpm-bookworm AS runtime
 
-# Dependências do sistema
+# Dependências do sistema + extensões PHP + OPcache
 RUN apt-get update && apt-get install -y \
     nginx \
     supervisor \
@@ -54,10 +55,8 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libpq-dev \
     ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
-
-# Extensões PHP + OPcache
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && rm -rf /var/lib/apt/lists/* \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql pdo_pgsql opcache \
     && echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/opcache.ini \
     && echo "opcache.memory_consumption=256" >> /usr/local/etc/php/conf.d/opcache.ini \
