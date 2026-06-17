@@ -18,7 +18,8 @@ RUN composer install \
 
 COPY . .
 
-RUN composer dump-autoload --optimize --no-dev
+RUN mkdir -p bootstrap/cache \
+    && composer dump-autoload --optimize --no-dev
 
 # ============================================================
 # Stage 2: Build dos assets Node/Vite
