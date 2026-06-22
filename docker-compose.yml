@@ -11,7 +11,18 @@ services:
             LOG_CHANNEL: stderr
         networks:
             - coolify
+        labels:
+            - "traefik.enable=true"
 
+            - "traefik.http.middlewares.monaco-redirect.redirectregex.regex=^(https?://)?monacolocacao\\.com\\.br(.*)"
+            - "traefik.http.middlewares.monaco-redirect.redirectregex.replacement=https://gidlocacao.com.br$${2}"
+            - "traefik.http.middlewares.monaco-redirect.redirectregex.permanent=true"
+
+            - "traefik.http.routers.monaco-redirect.rule=Host(`monacolocacao.com.br`) && PathPrefix(`/`)"
+            - "traefik.http.routers.monaco-redirect.entrypoints=https"
+            - "traefik.http.routers.monaco-redirect.tls=true"
+            - "traefik.http.routers.monaco-redirect.tls.certresolver=letsencrypt"
+            - "traefik.http.routers.monaco-redirect.middlewares=monaco-redirect"
 networks:
     coolify:
         external: true
