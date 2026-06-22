@@ -1,28 +1,49 @@
 services:
-    app:
-        build:
-            context: .
-            dockerfile: Dockerfile
-        container_name: monaco-locacao
-        restart: unless-stopped
-        environment:
-            APP_ENV: production
-            APP_DEBUG: "false"
-            LOG_CHANNEL: stderr
-        networks:
-            - coolify
-        labels:
-            - "traefik.enable=true"
-
-            - "traefik.http.middlewares.monaco-redirect.redirectregex.regex=^(https?://)?monacolocacao\\.com\\.br(.*)"
-            - "traefik.http.middlewares.monaco-redirect.redirectregex.replacement=https://gidlocacao.com.br$${2}"
-            - "traefik.http.middlewares.monaco-redirect.redirectregex.permanent=true"
-
-            - "traefik.http.routers.monaco-redirect.rule=Host(`monacolocacao.com.br`) && PathPrefix(`/`)"
-            - "traefik.http.routers.monaco-redirect.entrypoints=https"
-            - "traefik.http.routers.monaco-redirect.tls=true"
-            - "traefik.http.routers.monaco-redirect.tls.certresolver=letsencrypt"
-            - "traefik.http.routers.monaco-redirect.middlewares=monaco-redirect"
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app-nv55i5w86f629hcvf6n4s0yb-194855410049
+    restart: unless-stopped
+    environment:
+      APP_ENV: production
+      APP_DEBUG: 'false'
+      LOG_CHANNEL: stderr
+      COOLIFY_BRANCH: '"main"'
+      COOLIFY_RESOURCE_UUID: nv55i5w86f629hcvf6n4s0yb
+      COOLIFY_CONTAINER_NAME: app-nv55i5w86f629hcvf6n4s0yb-194855410049
+      SERVICE_NAME_APP: app
+    networks:
+      coolify: null
+      nv55i5w86f629hcvf6n4s0yb: null
+    labels:
+      - traefik.enable=true
+      - 'traefik.http.middlewares.monaco-redirect.redirectregex.regex=^(https?://)?monacolocacao\.com\.br(.*)'
+      - 'traefik.http.middlewares.monaco-redirect.redirectregex.replacement=https://gidlocacao.com.br$$$${2}'
+      - traefik.http.middlewares.monaco-redirect.redirectregex.permanent=true
+      - 'traefik.http.routers.monaco-redirect.rule=Host(`monacolocacao.com.br`) && PathPrefix(`/`)'
+      - traefik.http.routers.monaco-redirect.entrypoints=https
+      - traefik.http.routers.monaco-redirect.tls=true
+      - traefik.http.routers.monaco-redirect.tls.certresolver=letsencrypt
+      - traefik.http.routers.monaco-redirect.middlewares=monaco-redirect
+      - 'traefik.http.routers.monaco-redirect-http.rule=Host(`monacolocacao.com.br`) && PathPrefix(`/`)'
+      - traefik.http.routers.monaco-redirect-http.entrypoints=http
+      - traefik.http.routers.monaco-redirect-http.middlewares=monaco-redirect
+      - coolify.managed=true
+      - coolify.version=4.1.2
+      - coolify.applicationId=5
+      - coolify.type=application
+      - coolify.name=app-nv55i5w86f629hcvf6n4s0yb-194855410049
+      - coolify.resourceName=site-monaco-locacao
+      - coolify.projectName=sites-do-grupo-monaco
+      - coolify.serviceName=site-monaco-locacao
+      - coolify.environmentName=production
+      - coolify.pullRequestId=0
+    env_file:
+      - .env
 networks:
-    coolify:
-        external: true
+  coolify:
+    external: true
+  nv55i5w86f629hcvf6n4s0yb:
+    name: nv55i5w86f629hcvf6n4s0yb
+    external: true
